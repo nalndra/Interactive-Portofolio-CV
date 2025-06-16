@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Portfolio Canvas-Game</title>
+  <style>
+    canvas {
+      border: 2px solid black;
+      background: #edf5ff;
+    }
+
+    .social-icons {
+      margin-top: 20px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .social-icons a img {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .social-icons a img:hover {
+      transform: scale(1.1);
+    }
+
+    .social-icons a.instagram img {
+      width: 60px;
+      height: 60px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Portfolio Canvas-Game</h1>
+  <canvas id="gameCanvas" width="1080" height="720"></canvas>
+
+  <div class="social-icons">
+    <a href="https://github.com/nalndra" target="_blank" rel="noopener noreferrer">
+      <img src="assets/socials/GithubLogo.png" alt="GitHub Logo" />
+    </a>
+    <a href="https://www.instagram.com/nalndra?igsh=MWQ0YmRsNm5vNmFtaQ%3D%3D&utm_source=qr" target="_blank"
+      rel="noopener noreferrer">
+      <img src="assets/socials/logoInstagram.png" alt="Instagram Logo" />
+    </a>
+    <a href="https://www.linkedin.com/in/nalendra-jatayu-b877612ab/" target="_blank" rel="noopener noreferrer">
+      <img src="assets/socials/linkedinLogo.png" alt="LinkedIn Logo" />
+    </a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

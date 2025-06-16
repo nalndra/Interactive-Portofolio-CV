@@ -1,0 +1,41 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# VSCode settings
+.vscode/
+
+# Environment variables
+.env
+
+# Build output
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Ignore assets that are large or generated (if any)
+# For example, if you have large images or build artifacts, add here
+
+# Ignore system files
+*.swp
+*.swo
+
+# Ignore coverage reports
+coverage/
+
+# Ignore npm package lock if needed
+package-lock.json
+
+# Ignore yarn lock if needed
+yarn.lock
