@@ -31,12 +31,73 @@
       width: 60px;
       height: 60px;
     }
+
+    #startPage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 720px;
+      background-color: #edf5ff;
+      border: 2px solid black;
+    }
+
+    #startPage button {
+      margin: 10px;
+      padding: 15px 30px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    #settings,
+    #credits {
+      display: none;
+      text-align: center;
+      /* Remove margin-top to avoid shifting */
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .backButton {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
   </style>
 </head>
 
 <body>
   <h1>Portfolio Canvas-Game</h1>
-  <canvas id="gameCanvas" width="1080" height="720"></canvas>
+
+  <div id="startPage">
+    <button id="playButton">Play</button>
+    <button id="settingsButton">Setting</button>
+    <button id="creditsButton">Credit</button>
+
+    <div id="settings" class="popup">
+      <div class="popup-content" style="position: relative;">
+        <button id="closeSettings" class="closeButton"
+          style="position: absolute; top: 5px; right: 10px; font-size: 24px; background: none; border: none; cursor: pointer;">×</button>
+        <p>Controls:</p>
+        <p>W = Jump</p>
+        <p>A = Left</p>
+        <p>D = Right</p>
+        <p>S = Down</p>
+        <button id="backFromSettings" class="backButton">Back</button>
+      </div>
+    </div>
+
+    <div id="credits" class="popup">
+      <div class="popup-content" style="position: relative;">
+        <button id="closeCredits" class="closeButton"
+          style="position: absolute; top: 5px; right: 10px; font-size: 24px; background: none; border: none; cursor: pointer;">×</button>
+        <p>All by nalndra</p>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas" width="1900" height="720" style="display:none;"></canvas>
 
   <div class="social-icons">
     <a href="https://github.com/nalndra" target="_blank" rel="noopener noreferrer">
@@ -44,7 +105,7 @@
     </a>
     <a href="https://www.instagram.com/nalndra?igsh=MWQ0YmRsNm5vNmFtaQ%3D%3D&utm_source=qr" target="_blank"
       rel="noopener noreferrer">
-      <img src="assets/socials/logoInstagram.png" alt="Instagram Logo" />
+      <img src="assets/socials/IGLogo.png" alt="Instagram Logo" />
     </a>
     <a href="https://www.linkedin.com/in/nalendra-jatayu-b877612ab/" target="_blank" rel="noopener noreferrer">
       <img src="assets/socials/linkedinLogo.png" alt="LinkedIn Logo" />

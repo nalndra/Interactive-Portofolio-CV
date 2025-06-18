@@ -11,6 +11,16 @@ window.addEventListener('DOMContentLoaded', () => {
     w: false, a: false, d: false, e: false
   };
 
+  // UI elements
+  const startPage = document.getElementById('startPage');
+  const playButton = document.getElementById('playButton');
+  const settingsButton = document.getElementById('settingsButton');
+  const creditsButton = document.getElementById('creditsButton');
+  const settingsDiv = document.getElementById('settings');
+  const creditsDiv = document.getElementById('credits');
+  const backFromSettings = document.getElementById('backFromSettings');
+  const backFromCredits = document.getElementById('backFromCredits');
+
   // Character class representing player
   class Character {
     constructor(x, y, width, height, idleSrc, walkSrc, maxFrames = 21, frameRate = 10) {
@@ -26,9 +36,12 @@ window.addEventListener('DOMContentLoaded', () => {
       this.walkSprite = new Image();
       this.walkSprite.src = walkSrc;
 
+      this.jumpSprite = new Image();
+      this.jumpSprite.src = 'assets/characters/kid-myself/kidmyself-jump.png';
+
       this.currentSprite = this.idleSprite;
 
-      this.speed = 5;
+      this.speed = 3;
       this.velocityX = 0;
       this.velocityY = 0;
       this.jumping = false;
@@ -81,12 +94,21 @@ window.addEventListener('DOMContentLoaded', () => {
       if (this.x + this.width * this.scale > canvas.width) this.x = canvas.width - this.width * this.scale;
 
       // Switch animation based on movement
-      if (Math.abs(this.velocityX) > 0.1) {
+      if (this.jumping) {
+        this.currentAnimation = 'jump';
+        this.currentSprite = this.jumpSprite;
+        this.maxFrames = 21; // Assuming jump animation has 21 frames, adjust if different
+        this.frameRate = 10; // Adjust frame rate if needed
+      } else if (Math.abs(this.velocityX) > 0.1) {
         this.currentAnimation = 'walk';
         this.currentSprite = this.walkSprite;
+        this.maxFrames = 21;
+        this.frameRate = 10;
       } else {
         this.currentAnimation = 'idle';
         this.currentSprite = this.idleSprite;
+        this.maxFrames = 21;
+        this.frameRate = 10;
       }
 
       // Animate frames
@@ -231,8 +253,13 @@ window.addEventListener('DOMContentLoaded', () => {
   let showTutorial = true;
   let tutorialTimer = null;
 
+  // Game state
+  let gameStarted = false;
+
   // Main game loop
   function gameLoop() {
+    if (!gameStarted) return;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Update entities
@@ -263,7 +290,7 @@ window.addEventListener('DOMContentLoaded', () => {
       ctx.fillStyle = 'black';
       ctx.font = '20px Arial';
       // Draw text above NPC
-      ctx.fillText('memek', npc.x, npc.y - 10);
+      ctx.fillText('Hello World!', npc.x, npc.y - 10);
     }
 
     // Show tutorial message
@@ -275,6 +302,52 @@ window.addEventListener('DOMContentLoaded', () => {
 
     requestAnimationFrame(gameLoop);
   }
+
+  // UI event handlers
+  playButton.addEventListener('click', () => {
+    startPage.style.display = 'none';
+    canvas.style.display = 'block';
+    gameStarted = true;
+    gameLoop();
+  });
+
+  settingsButton.addEventListener('click', () => {
+    settingsDiv.style.display = 'flex';
+    creditsDiv.style.display = 'none';
+    // Disable interaction with startPage buttons while popup is open
+    startPage.style.pointerEvents = 'none';
+    startPage.style.opacity = '0.5';
+  });
+
+  creditsButton.addEventListener('click', () => {
+    creditsDiv.style.display = 'flex';
+    settingsDiv.style.display = 'none';
+    // Disable interaction with startPage buttons while popup is openko
+    startPage.style.pointerEvents = 'none';
+    startPage.style.opacity = '0.5';
+  });
+
+  backFromSettings.addEventListener('click', () => {
+    settingsDiv.style.display = 'none';
+  });
+
+
+  const closeSettings = document.getElementById('closeSettings');
+  const closeCredits = document.getElementById('closeCredits');
+
+  closeSettings.addEventListener('click', () => {
+    settingsDiv.style.display = 'none';
+    // Re-enable interaction with startPage buttons when popup is closed
+    startPage.style.pointerEvents = 'auto';
+    startPage.style.opacity = '1';
+  });
+
+  closeCredits.addEventListener('click', () => {
+    creditsDiv.style.display = 'none';
+    // Re-enable interaction with startPage buttons when popup is closed
+    startPage.style.pointerEvents = 'auto';
+    startPage.style.opacity = '1';
+  });
 
   // Key event listeners
   window.addEventListener('keydown', (e) => {
@@ -298,7 +371,4 @@ window.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'd') keys.d = false;
     if (e.key === 'e') keys.e = false;
   });
-
-  // Start game loop
-  gameLoop();
 });
