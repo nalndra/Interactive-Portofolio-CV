@@ -54,6 +54,12 @@ canvas#gameCanvas {
   position: relative;
   text-align: center;
   font-size: 20px;
+  outline: 2px solid black;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 150px;
 }
 
 /* Close button */
@@ -77,3 +83,10 @@ canvas#gameCanvas {
 }
 
 /* Additional styles for game UI elements can be added here */
+
+.social-icons {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1100;
+}

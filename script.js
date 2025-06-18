@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Keys pressed state
   const keys = {
-    w: false, a: false, d: false, e: false
+    w: false, a: false, d: false, e: false, f: false
   };
 
   // UI elements
@@ -256,6 +256,18 @@ window.addEventListener('DOMContentLoaded', () => {
   // Game state
   let gameStarted = false;
 
+  // Define red box at the end of tutorial level
+  const redBox = {
+    x: canvas.width - 100,
+    y: canvas.height - 100,
+    width: 50,
+    height: 50,
+    color: 'red'
+  };
+
+  // Level state
+  let currentLevel = 1;
+
   // Main game loop
   function gameLoop() {
     if (!gameStarted) return;
@@ -270,6 +282,12 @@ window.addEventListener('DOMContentLoaded', () => {
     player.draw();
     if (npc.sprite.complete) {
       npc.draw();
+    }
+
+    // Draw red box if on tutorial level
+    if (currentLevel === 1) {
+      ctx.fillStyle = redBox.color;
+      ctx.fillRect(redBox.x, redBox.y, redBox.width, redBox.height);
     }
 
     // Interaction check
@@ -293,8 +311,66 @@ window.addEventListener('DOMContentLoaded', () => {
       ctx.fillText('Hello World!', npc.x, npc.y - 10);
     }
 
+    // Show "Press [F] to proceed" near red box when player is close
+    if (currentLevel === 1) {
+      const playerRight = player.x + player.width * player.scale;
+      const playerBottom = player.y + player.height * player.scale;
+      const redBoxRight = redBox.x + redBox.width;
+      const redBoxBottom = redBox.y + redBox.height;
+
+      const isNearRedBox = !(player.x > redBoxRight ||
+        playerRight < redBox.x ||
+        player.y > redBoxBottom ||
+        playerBottom < redBox.y);
+
+      if (isNearRedBox) {
+        ctx.fillStyle = 'black';
+        ctx.font = '16px Arial';
+        ctx.fillText('Press [F] to proceed', redBox.x, redBox.y - 10);
+      }
+    }
+
+    // Check if player is overlapping red box and presses 'f' to go to next level
+    if (currentLevel === 1 && keys.f) {
+      const playerRight = player.x + player.width * player.scale;
+      const playerBottom = player.y + player.height * player.scale;
+      const redBoxRight = redBox.x + redBox.width;
+      const redBoxBottom = redBox.y + redBox.height;
+
+      const isOverlapping = !(player.x > redBoxRight ||
+        playerRight < redBox.x ||
+        player.y > redBoxBottom ||
+        playerBottom < redBox.y);
+
+      if (isOverlapping) {
+        currentLevel++;
+        // Reposition player for new level spawn
+        switch (currentLevel) {
+          case 2:
+            player.x = 100;
+            player.y = canvas.height - 64;
+            break;
+          case 3:
+            player.x = 150;
+            player.y = canvas.height - 64;
+            break;
+          // Add more cases for additional levels as needed
+          default:
+            player.x = 50;
+            player.y = canvas.height - 64;
+        }
+        // Clear canvas and show new level message
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'black';
+        ctx.font = '30px Arial';
+        ctx.fillText(`Welcome to Level ${currentLevel}!`, canvas.width / 2 - 100, canvas.height / 2);
+        // Continue game loop
+        gameStarted = true;
+      }
+    }
+
     // Show tutorial message
-    if (showTutorial) {
+    if (showTutorial && currentLevel === 1) {
       ctx.fillStyle = 'black';
       ctx.font = '18px Arial';
       ctx.fillText('Tutorial: W=Jump, A=Left, D=Right, S=Down', 10, 50);
@@ -312,41 +388,19 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   settingsButton.addEventListener('click', () => {
-    settingsDiv.style.display = 'flex';
-    creditsDiv.style.display = 'none';
-    // Disable interaction with startPage buttons while popup is open
-    startPage.style.pointerEvents = 'none';
-    startPage.style.opacity = '0.5';
+    if (settingsDiv.style.display === 'block') {
+      settingsDiv.style.display = 'none';
+    } else {
+      settingsDiv.style.display = 'block';
+    }
   });
 
   creditsButton.addEventListener('click', () => {
-    creditsDiv.style.display = 'flex';
-    settingsDiv.style.display = 'none';
-    // Disable interaction with startPage buttons while popup is openko
-    startPage.style.pointerEvents = 'none';
-    startPage.style.opacity = '0.5';
-  });
-
-  backFromSettings.addEventListener('click', () => {
-    settingsDiv.style.display = 'none';
-  });
-
-
-  const closeSettings = document.getElementById('closeSettings');
-  const closeCredits = document.getElementById('closeCredits');
-
-  closeSettings.addEventListener('click', () => {
-    settingsDiv.style.display = 'none';
-    // Re-enable interaction with startPage buttons when popup is closed
-    startPage.style.pointerEvents = 'auto';
-    startPage.style.opacity = '1';
-  });
-
-  closeCredits.addEventListener('click', () => {
-    creditsDiv.style.display = 'none';
-    // Re-enable interaction with startPage buttons when popup is closed
-    startPage.style.pointerEvents = 'auto';
-    startPage.style.opacity = '1';
+    if (creditsDiv.style.display === 'block') {
+      creditsDiv.style.display = 'none';
+    } else {
+      creditsDiv.style.display = 'block';
+    }
   });
 
   // Key event listeners
@@ -355,6 +409,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'a') keys.a = true;
     if (e.key === 'd') keys.d = true;
     if (e.key === 'e') keys.e = true;
+    if (e.key === 'f') keys.f = true;
 
     // Start tutorial timer on movement input
     if (['w', 'a', 'd', 's'].includes(e.key) && showTutorial && tutorialTimer === null) {
@@ -370,5 +425,6 @@ window.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'a') keys.a = false;
     if (e.key === 'd') keys.d = false;
     if (e.key === 'e') keys.e = false;
+    if (e.key === 'f') keys.f = false;
   });
 });
