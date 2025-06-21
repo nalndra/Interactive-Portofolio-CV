@@ -83,7 +83,7 @@
   <h1>Work In Progress --nalndra</h1>
 
   <div id="introPage">
-    <p>Press any key to start</p>
+    <p>Tap the screen, it might work... Not too sure.</p>
   </div>
 
   <div id="startPage">
@@ -96,6 +96,8 @@
       <p>A = Left</p>
       <p>D = Right</p>
       <p>S = Down</p>
+      <label for="volumeSlider">Volume:</label>
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" />
     </div>
     <button id="creditsButton">Credit</button>
     <div id="credits"
@@ -106,6 +108,10 @@
   </div>
 
   <canvas id="gameCanvas" width="1900" height="720" style="display:none;"></canvas>
+
+  <button id="musicToggleButton" aria-label="Toggle Music" style="display:none;">
+    <img id="musicLogo" src="assets/miscellaneous/musiclogo-true.png" alt="Music On" />
+  </button>
 
   <div class="social-icons">
     <a href="https://github.com/nalndra" target="_blank" rel="noopener noreferrer">

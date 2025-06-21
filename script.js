@@ -5,8 +5,10 @@ window.addEventListener('DOMContentLoaded', () => {
   // Audio objects for background music
   const startMenuMusic = new Audio('assets/musics/START  8-Bit Chiptune .mp3');
   startMenuMusic.loop = true;
+  startMenuMusic.volume = 0.5;
   const levelMusic = new Audio('assets/musics/EXPLORE  8-Bit Chiptune .mp3');
   levelMusic.loop = true;
+  levelMusic.volume = 0.5;
 
   // Play start menu music initially after user interaction (fallback)
   function playStartMenuMusic() {
@@ -28,7 +30,8 @@ window.addEventListener('DOMContentLoaded', () => {
     introPage.removeEventListener('touchstart', startFromIntro);
   }
 
-  window.addEventListener('keydown', startFromIntro);
+  // Removed keydown event listener to respond only to tap buttons on screen
+  // window.addEventListener('keydown', startFromIntro);
   introPage.addEventListener('click', startFromIntro);
   introPage.addEventListener('touchstart', startFromIntro);
 
@@ -49,6 +52,13 @@ window.addEventListener('DOMContentLoaded', () => {
   const creditsDiv = document.getElementById('credits');
   const backFromSettings = document.getElementById('backFromSettings');
   const backFromCredits = document.getElementById('backFromCredits');
+
+  const volumeSlider = document.getElementById('volumeSlider');
+  volumeSlider.addEventListener('input', (e) => {
+    const volume = parseFloat(e.target.value);
+    startMenuMusic.volume = volume;
+    levelMusic.volume = volume;
+  });
 
   // Character class representing player
   class Character {
@@ -407,14 +417,6 @@ window.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(gameLoop);
   }
 
-  // UI event handlers
-  playButton.addEventListener('click', () => {
-    startPage.style.display = 'none';
-    canvas.style.display = 'block';
-    gameStarted = true;
-    gameLoop();
-  });
-
   settingsButton.addEventListener('click', () => {
     if (settingsDiv.style.display === 'block') {
       settingsDiv.style.display = 'none';
@@ -456,10 +458,39 @@ window.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'f') keys.f = false;
   });
 
-  // Play button event to switch music
+  // Play button event to switch music and show mute button
   playButton.addEventListener('click', () => {
+    if (gameStarted) return; // Prevent multiple game loops
+    startPage.style.display = 'none';
+    canvas.style.display = 'block';
+    gameStarted = true;
+    gameLoop();
+
+    // Show music toggle button when game starts
+    const musicToggleButton = document.getElementById('musicToggleButton');
+    const musicLogo = document.getElementById('musicLogo');
+    musicToggleButton.style.display = 'block';
+
+    // Initialize music as unmuted
+    let isMuted = false;
+
+    // Play level music
     startMenuMusic.pause();
     startMenuMusic.currentTime = 0;
     levelMusic.play();
+
+    // Toggle mute/unmute on button click
+    musicToggleButton.onclick = () => {
+      isMuted = !isMuted;
+      startMenuMusic.muted = isMuted;
+      levelMusic.muted = isMuted;
+      if (isMuted) {
+        musicLogo.src = 'assets/miscellaneous/musiclogo-false.png';
+        musicLogo.alt = 'Music Off';
+      } else {
+        musicLogo.src = 'assets/miscellaneous/musiclogo-true.png';
+        musicLogo.alt = 'Music On';
+      }
+    };
   });
 });
