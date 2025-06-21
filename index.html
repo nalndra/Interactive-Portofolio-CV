@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Portfolio Canvas-Game</title>
+  <title>My Interactive Portofolio</title>
   <style>
     canvas {
       border: 2px solid black;
@@ -32,8 +32,20 @@
       height: 60px;
     }
 
-    #startPage {
+    #introPage {
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 720px;
+      background-color: #edf5ff;
+      border: 2px solid black;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    #startPage {
+      display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -68,7 +80,11 @@
 </head>
 
 <body>
-  <h1>Portfolio Canvas-Game</h1>
+  <h1>Work In Progress --nalndra</h1>
+
+  <div id="introPage">
+    <p>Press any key to start</p>
+  </div>
 
   <div id="startPage">
     <button id="playButton">Play</button>
@@ -84,7 +100,8 @@
     <button id="creditsButton">Credit</button>
     <div id="credits"
       style="display:none; margin-top: 10px; font-size: 16px; border: 1px solid black; padding: 10px; max-width: 300px;">
-      <p>All works by: Nalendra Magi Jatayu</p>
+      <p>Works by: Nalendra Magi Jatayu</p>
+      <p>Music: "EXPLORE" by Adventure Chiptunes, "START" by Adventure Chiptunes</p>
     </div>
   </div>
 

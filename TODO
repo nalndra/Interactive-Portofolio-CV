@@ -1,12 +1,12 @@
 TODO:
 -- 1. Create a simple game for CV
--- 2. Add a story with characters inspired by famous figures
+-- 2. Add a story with characters inspired by influential figures in my life
 -- 3. Implement levels and an ending
 IDEA: 
 -- game untuk cv, ada story, levels, endingnya ada characters inspired dari siapa.
 CHARACTERS:
--- Karakter berjubah, anonymous (soon revealed to be me)
--- NPC tutorial (current me)
+-- Karakter berjubah, anonymous NPC(soon revealed to be me)
+-- kid me (current me)
 -- angel (kalau mati dihidupin lagi sama dia)
 -- fear (boss, nanti ada di pertengahan dan ending)
 TODO:
@@ -16,3 +16,5 @@ TODO:
 -- fix resolusi (done?)
 -- animasi interaktif saat bicara
 -- alur cerita
+-- bisa terintegrasi dengan web mobile
+-- add background music

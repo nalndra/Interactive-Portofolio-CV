@@ -2,6 +2,36 @@ window.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
 
+  // Audio objects for background music
+  const startMenuMusic = new Audio('assets/musics/START  8-Bit Chiptune .mp3');
+  startMenuMusic.loop = true;
+  const levelMusic = new Audio('assets/musics/EXPLORE  8-Bit Chiptune .mp3');
+  levelMusic.loop = true;
+
+  // Play start menu music initially after user interaction (fallback)
+  function playStartMenuMusic() {
+    startMenuMusic.play().catch((error) => {
+      console.log('Start menu music play prevented:', error);
+    });
+  }
+
+  const introPage = document.getElementById('introPage');
+  const startPage = document.getElementById('startPage');
+
+  // Listen for any key press on intro page to start game
+  function startFromIntro() {
+    introPage.style.display = 'none';
+    startPage.style.display = 'flex';
+    playStartMenuMusic();
+    window.removeEventListener('keydown', startFromIntro);
+    introPage.removeEventListener('click', startFromIntro);
+    introPage.removeEventListener('touchstart', startFromIntro);
+  }
+
+  window.addEventListener('keydown', startFromIntro);
+  introPage.addEventListener('click', startFromIntro);
+  introPage.addEventListener('touchstart', startFromIntro);
+
   // Gravity and friction constants
   const gravity = 0.5;
   const friction = 0.8;
@@ -12,7 +42,6 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   // UI elements
-  const startPage = document.getElementById('startPage');
   const playButton = document.getElementById('playButton');
   const settingsButton = document.getElementById('settingsButton');
   const creditsButton = document.getElementById('creditsButton');
@@ -241,8 +270,7 @@ window.addEventListener('DOMContentLoaded', () => {
     'assets/characters/kid-myself/kidmyself-idle.png',
     'assets/characters/kid-myself/kidmyself-walk.png',
     21,
-    10,
-    2
+    10
   );
   const npc = new NPC(500, canvas.height - 64, 32, 32, 'assets/characters/myselfNPC/myself-idle.png', 21, 10, 3);
 
@@ -426,5 +454,12 @@ window.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'd') keys.d = false;
     if (e.key === 'e') keys.e = false;
     if (e.key === 'f') keys.f = false;
+  });
+
+  // Play button event to switch music
+  playButton.addEventListener('click', () => {
+    startMenuMusic.pause();
+    startMenuMusic.currentTime = 0;
+    levelMusic.play();
   });
 });
