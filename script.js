@@ -337,7 +337,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Show interaction prompt
     if (showInteractionMessage && !keys.e) {
-      ctx.fillStyle = 'black';
+      ctx.fillStyle = 'white';
       ctx.font = '16px Arial';
       ctx.fillText('Press [E] to interact', player.x, player.y - 10);
     }
@@ -490,6 +490,7 @@ window.addEventListener('DOMContentLoaded', () => {
       } else {
         musicLogo.src = 'assets/miscellaneous/musiclogo-true.png';
         musicLogo.alt = 'Music On';
+
       }
     };
   });
