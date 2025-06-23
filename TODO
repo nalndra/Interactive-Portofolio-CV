@@ -18,3 +18,8 @@ TODO:
 -- alur cerita
 -- bisa terintegrasi dengan web mobile
 -- add background music
+-- theres a room that has many doors. each doors is a room with expertise explanations.
+-- on the last room theres a big room with a boss in it. 
+-- if player hasnt enter a room, they cannot fight the boss.
+-- each room has a heart, if player collects it it adds heart into the player
+-- figure the fight and hp mechanism
