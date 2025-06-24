@@ -7,7 +7,7 @@ export class Character {
     this.y = y;
     this.width = width;
     this.height = height;
-    this.scale = 3;
+    this.scale = 2; // was 3, now 2 for smaller canvas
     this.idleSprite = new Image();
     this.idleSprite.src = idleSrc;
     this.walkSprite = new Image();
@@ -15,11 +15,11 @@ export class Character {
     this.jumpSprite = new Image();
     this.jumpSprite.src = 'assets/characters/kid-myself/kidmyself-jump.png';
     this.currentSprite = this.idleSprite;
-    this.speed = 3;
+    this.speed = 2.2; // slightly slower for smaller area
     this.velocityX = 0;
     this.velocityY = 0;
     this.jumping = false;
-    this.groundLevel = 720 - this.height * this.scale; // Default canvas height
+    this.groundLevel = 480 - this.height * this.scale; // Default canvas height
     this.maxFrames = maxFrames;
     this.frame = 0;
     this.frameCounter = 0;

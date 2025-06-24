@@ -2,21 +2,21 @@
 // Contains the NPC class
 
 export class NPC {
-  constructor(x, y, width, height, spriteSrc, maxFrames = 21, frameRate = 10, scale = 3) {
+  constructor(x, y, width, height, spriteSrc, maxFrames = 21, frameRate = 10, scale = 2) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.scale = scale;
+    this.scale = scale; // now 2 for smaller canvas
     this.sprite = new Image();
     this.sprite.src = spriteSrc;
     this.direction = 'right';
-    this.interactionDistance = 50;
+    this.interactionDistance = 40; // smaller for smaller canvas
     this.maxFrames = maxFrames;
     this.frame = 0;
     this.frameCounter = 0;
     this.frameRate = frameRate;
-    this.groundLevel = 720 - this.height * this.scale; // Default canvas height
+    this.groundLevel = 480 - this.height * this.scale; // Default canvas height
   }
   update(player, canvas) {
     this.direction = player.x < this.x ? 'left' : 'right';
