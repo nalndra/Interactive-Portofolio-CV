@@ -39,3 +39,6 @@ package-lock.json
 
 # Ignore yarn lock if needed
 yarn.lock
+
+# Ignore TODO
+TODO

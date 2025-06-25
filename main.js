@@ -1,6 +1,6 @@
 // main.js
 // Entry point: handles DOMContentLoaded, UI, and game loop
-import { startMenuMusic, levelMusic, playStartMenuMusic, setVolume, toggleMute } from './js/audio.js';
+import { startMenuMusic, levelMusic, playStartMenuMusic, setVolume, toggleMute, dungeonMusic } from './js/audio.js';
 import { Character } from './js/player.js';
 import { NPC } from './js/npc.js';
 
@@ -78,7 +78,7 @@ window.addEventListener('DOMContentLoaded', () => {
       width: 640,
       doors: [new Door({ x: 640 - 120, y: 480 - 96, targetRoom: 1, label: 'Tavern', spawnOffset: 10 })],
       // NPC hanya ada jika belum masuk ke tavern
-      npcs: [{ x: (0 + (640 - 120)) / 2 - 16, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png' }],
+      npcs: [{ x: (0 + (640 - 120)) / 2 - 16, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png', id: 'mainnpc' }],
       playerStart: { x: 0, y: 480 - 64 },
     },
     // Tavern
@@ -86,20 +86,18 @@ window.addEventListener('DOMContentLoaded', () => {
       name: 'tavern',
       width: 1280,
       doors: [
-        new Door({ x: 0, y: 480 - 96, targetRoom: 0, label: 'Exit', spawnOffset: 10 }),
-        // === PINTU INFORMASI (pindahkan posisi x sesuai kebutuhan) ===
         new Door({ x: 400, y: 480 - 96, targetRoom: 2, label: 'Owner Info', spawnOffset: 10 }),
-        // === PINTU SKILLS (pindahkan posisi x sesuai kebutuhan) ===
-        new Door({ x: 520, y: 480 - 96, targetRoom: 3, label: 'Skills', spawnOffset: 10 }),
-        // === PINTU EXPERIENCE ===
-        new Door({ x: 640, y: 480 - 96, targetRoom: 4, label: 'Experience', spawnOffset: 10 }),
-        // === PINTU CERTIFICATE ===
-        new Door({ x: 760, y: 480 - 96, targetRoom: 5, label: 'Certificate', spawnOffset: 10 }),
-        // === PINTU SOON ===
-        new Door({ x: 880, y: 480 - 96, targetRoom: 'soon', label: '???', spawnOffset: 10 })
+        new Door({ x: 525, y: 480 - 96, targetRoom: 3, label: 'Skills', spawnOffset: 10 }),
+        new Door({ x: 650, y: 480 - 96, targetRoom: 4, label: 'Experience', spawnOffset: 10 }),
+        new Door({ x: 775, y: 480 - 96, targetRoom: 5, label: 'Certificate', spawnOffset: 10 }),
+        new Door({ x: 1200, y: 480 - 96, targetRoom: 'soon', label: '???', spawnOffset: 10 }), // mentok kanan
+        new Door({ x: 0, y: 480 - 96, targetRoom: 0, label: 'Exit', spawnOffset: 10 }) // Exit tetap di kiri
       ],
-      // NPC di dalam tavern, sebelum pintu info
-      npcs: [{ x: 320, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png' }],
+      npcs: [
+        { x: 320, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png', id: 'mainnpc' },
+        // === NPC SAATCHI ===
+        { x: 1050, y: 480 - 64, sprite: 'assets/characters/Saatchi/Saatchi-idle.png', id: 'saatchi', defaultDirection: 'right', direction: 'right' }
+      ],
       playerStart: { x: 0 + 80 + 10, y: 480 - 64 },
     },
     // Room Info/Portfolio
@@ -113,18 +111,20 @@ window.addEventListener('DOMContentLoaded', () => {
     // Room 3: Skills
     {
       name: 'skills',
-      width: 640,
+      width: 1280, // lebih luas
       doors: [new Door({ x: 0, y: 480 - 96, targetRoom: 1, label: 'Back', spawnOffset: 10 })],
       npcs: [],
       playerStart: { x: 0 + 80 + 10, y: 480 - 64 },
-      // Daftar sprite skills (akan digambar manual di gameLoop)
+      // Daftar sprite skills (rapi, grid horizontal, jarak 100px)
       skillSprites: [
-        { src: 'assets/miscellaneous/Sprite-CSS.jpg', label: 'CSS', x: 120 },
-        { src: 'assets/miscellaneous/Sprite-Firebase.jpg', label: 'Firebase', x: 200 },
-        { src: 'assets/miscellaneous/Sprite-GO.jpg', label: 'Go', x: 280 },
-        { src: 'assets/miscellaneous/Sprite-HTML.jpg', label: 'HTML', x: 360 },
-        { src: 'assets/miscellaneous/Sprite-JS.jpg', label: 'JS', x: 440 },
-        { src: 'assets/miscellaneous/Sprite-VSCode.jpg', label: 'VSCode', x: 520 }
+        { src: 'assets/miscellaneous/Sprite-CSS.png', label: 'CSS', x: 200 },
+        { src: 'assets/miscellaneous/Sprite-Firebase.png', label: 'Firebase', x: 320 },
+        { src: 'assets/miscellaneous/Sprite-GO.png', label: 'Go', x: 440 },
+        { src: 'assets/miscellaneous/Sprite-HTML.png', label: 'HTML', x: 560 },
+        { src: 'assets/miscellaneous/Sprite-JS.png', label: 'JS', x: 680 },
+        { src: 'assets/miscellaneous/Sprite-VSCode.png', label: 'VSCode', x: 800 },
+        { src: 'assets/miscellaneous/Sprite-MySQL.png', label: 'MySQL', x: 920 },
+        { src: 'assets/miscellaneous/Sprite-Flutter.png', label: 'Flutter', x: 1040 }
       ]
     },
     // Room 4: Experience
@@ -162,22 +162,44 @@ window.addEventListener('DOMContentLoaded', () => {
   let npcs = [];
   let currentRoom = 0;
 
-  function loadRoom(idx, fromDoor = null) {
+  function playRoomMusic(roomIdx) {
+    if (roomIdx === 1) { // Tavern
+      if (!dungeonMusic.paused) return;
+      levelMusic.pause();
+      levelMusic.currentTime = 0;
+      dungeonMusic.currentTime = 0;
+      dungeonMusic.play();
+    } else {
+      if (!levelMusic.paused) return;
+      dungeonMusic.pause();
+      dungeonMusic.currentTime = 0;
+      levelMusic.currentTime = 0;
+      levelMusic.play();
+    }
+  }
+
+  function loadRoom(idx, fromDoor = null, skipMusic = false) {
     currentRoom = idx;
     const room = rooms[idx];
     // NPC logic: hanya satu NPC, posisinya di luar jika belum pernah ke tavern, setelah itu hanya di dalam tavern
     if (typeof window._npcHasEnteredTavern === 'undefined') window._npcHasEnteredTavern = false;
     if (idx === 0) {
       // NPC di luar hanya jika belum pernah ke tavern
-      rooms[0].npcs = window._npcHasEnteredTavern ? [] : [{ x: (0 + (640 - 120)) / 2 - 16, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png' }];
+      rooms[0].npcs = window._npcHasEnteredTavern ? [] : [{ x: (0 + (640 - 120)) / 2 - 16, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png', id: 'mainnpc' }];
     }
     if (idx === 1) {
       // Begitu masuk ke tavern, NPC hanya muncul di dalam
       window._npcHasEnteredTavern = true;
-      rooms[1].npcs = [{ x: 320, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png' }];
+      rooms[1].npcs = [
+        { x: 320, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png', id: 'mainnpc' },
+        { x: 1050, y: 480 - 64, sprite: 'assets/characters/Saatchi/Saatchi-idle.png', id: 'saatchi', defaultDirection: 'right', direction: 'right' }
+      ];
     } else {
       // NPC di dalam hanya jika sudah pernah ke tavern
-      rooms[1].npcs = window._npcHasEnteredTavern ? [{ x: 320, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png' }] : [];
+      rooms[1].npcs = window._npcHasEnteredTavern ? [
+        { x: 320, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png', id: 'mainnpc' },
+        { x: 1050, y: 480 - 64, sprite: 'assets/characters/Saatchi/Saatchi-idle.png', id: 'saatchi', defaultDirection: 'right', direction: 'right' }
+      ] : [];
     }
     const spawn = room.doors.find(d => fromDoor && d.targetRoom === fromDoor.originRoomIdx);
     if (spawn) {
@@ -188,7 +210,8 @@ window.addEventListener('DOMContentLoaded', () => {
       player.x = room.playerStart.x;
       player.y = room.playerStart.y;
     }
-    npcs = room.npcs.map(n => new NPC(n.x, n.y, 32, 32, n.sprite, 21, 10, 2));
+    npcs = room.npcs.map(n => new NPC(n.x, n.y, 32, 32, n.sprite, 21, 10, 2, n.id, n.defaultDirection, n.direction));
+    if (!skipMusic) playRoomMusic(idx); // Only play music if not skipped
   }
 
   // === UI Event Handlers ===
@@ -206,9 +229,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // === Intro Page Event ===
   function startFromIntro() {
+    console.log('Intro page clicked/touched');
     introPage.style.display = 'none';
     startPage.style.display = 'flex';
-    playStartMenuMusic();
+    // Only play START music here
+    if (typeof startMenuMusic !== 'undefined') {
+      startMenuMusic.currentTime = 0;
+      startMenuMusic.play();
+    }
+    if (typeof levelMusic !== 'undefined') {
+      levelMusic.pause();
+      levelMusic.currentTime = 0;
+    }
+    if (typeof dungeonMusic !== 'undefined') {
+      dungeonMusic.pause();
+      dungeonMusic.currentTime = 0;
+    }
     window.removeEventListener('keydown', startFromIntro);
     introPage.removeEventListener('click', startFromIntro);
     introPage.removeEventListener('touchstart', startFromIntro);
@@ -240,6 +276,17 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // === E-Interact Sprite Animation Setup ===
+  // Make sure these are initialized before gameLoop
+  const eInteractImg = new Image();
+  eInteractImg.src = 'assets/miscellaneous/E-Interact.png';
+  const E_INTERACT_FRAME_WIDTH = 32;
+  const E_INTERACT_FRAME_HEIGHT = 32;
+  const E_INTERACT_TOTAL_FRAMES = 20;
+  let eInteractFrame = 0;
+  let eInteractAnimCounter = 0;
+  const E_INTERACT_ANIM_SPEED = 6;
+
   // === Music Toggle ===
   function setupMusicToggle() {
     if (!musicToggleButton || !musicLogo) return;
@@ -248,79 +295,123 @@ window.addEventListener('DOMContentLoaded', () => {
     musicToggleButton.onclick = () => {
       isMuted = !isMuted;
       toggleMute(isMuted, musicLogo);
+      if (typeof startMenuMusic !== 'undefined') startMenuMusic.muted = isMuted;
+      if (typeof levelMusic !== 'undefined') levelMusic.muted = isMuted;
+      if (typeof dungeonMusic !== 'undefined') dungeonMusic.muted = isMuted;
     };
   }
 
   // === Main Game Loop ===
   function gameLoop() {
-    if (!gameStarted) return;
-    // Camera follow logic (khusus room besar)
-    const room = rooms[currentRoom];
-    if (room.width > canvas.width) {
-      // Player di tengah layar, kecuali di ujung room
-      cameraX = player.x + player.width * player.scale / 2 - canvas.width / 2;
-      cameraX = Math.max(0, Math.min(cameraX, room.width - canvas.width));
-    } else {
-      cameraX = 0;
-    }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    player.update(keys, gravity, friction, { width: room.width, height: canvas.height });
-    npcs.forEach(npc => npc.update(player, { width: room.width, height: canvas.height }));
-    // Draw doors
-    room.doors.forEach(door => door.drawWithCamera(ctx, cameraX));
-    // Draw NPCs
-    npcs.forEach(npc => npc.drawWithCamera(ctx, cameraX));
-    // Draw player
-    player.drawWithCamera(ctx, cameraX);
-    // Door interaction
-    room.doors.forEach(door => {
-      if (door.isPlayerNear(player)) {
-        ctx.fillStyle = 'black';
-        ctx.font = '16px Arial';
-        ctx.fillText('Press [F] to enter', door.x - cameraX + 5, door.y - 25);
-        if (keys.f && canUseDoor) {
-          canUseDoor = false;
-          if (door.targetRoom === 'soon') {
-            // Tampilkan pesan soon
-            ctx.fillStyle = 'red';
-            ctx.font = '32px Arial';
-            ctx.fillText('SOON', canvas.width / 2 - 50, canvas.height / 2);
+    try {
+      if (!gameStarted) return;
+      // Camera follow logic (khusus room besar)
+      const room = rooms[currentRoom];
+      if (room.width > canvas.width) {
+        cameraX = player.x + player.width * player.scale / 2 - canvas.width / 2;
+        cameraX = Math.max(0, Math.min(cameraX, room.width - canvas.width));
+      } else {
+        cameraX = 0;
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      player.update(keys, gravity, friction, { width: room.width, height: canvas.height });
+      npcs.forEach(npc => npc.update(player, { width: room.width, height: canvas.height }));
+      // Draw doors
+      room.doors.forEach(door => door.drawWithCamera(ctx, cameraX));
+      // Draw NPCs
+      npcs.forEach(npc => {
+        // HANYA myselfNPC (mainnpc) yang selalu lihat ke arah player
+        if (npc.id === 'mainnpc') {
+          npc.direction = player.x < npc.x ? 'left' : 'right';
+        } else if (npc.id === 'saatchi' || npc.id === 'angel') {
+          // saatchi & angel hanya lihat ke arah player saat interaksi
+          if (npc.isPlayerClose(player) && keys.e) {
+            npc.direction = player.x < npc.x ? 'left' : 'right';
           } else {
-            loadRoom(door.targetRoom, { originRoomIdx: currentRoom });
+            npc.direction = npc.defaultDirection || 'right';
+          }
+        } else {
+          // NPC lain hanya lihat ke arah player saat interaksi
+          if (npc.isPlayerClose(player) && keys.e) {
+            npc.direction = player.x < npc.x ? 'left' : 'right';
+          } else {
+            npc.direction = npc.defaultDirection || 'right';
           }
         }
-      }
-    });
-    // NPC interaction (only if ada NPC di room)
-    npcs.forEach(npc => {
-      if (npc.isPlayerClose(player) && !keys.e) {
-        ctx.fillStyle = 'white';
-        ctx.font = '16px Arial';
-        ctx.fillText('Press [E] to interact', player.x - cameraX, player.y - 10);
-      }
-      if (npc.isPlayerClose(player) && keys.e) {
-        ctx.fillStyle = 'black';
-        ctx.font = '20px Arial';
-        ctx.fillText('Hello World!', npc.x - cameraX, npc.y - 10);
-      }
-    });
-    if (showTutorial && currentRoom === 0) {
-      ctx.fillStyle = 'black';
-      ctx.font = '18px Arial';
-      ctx.fillText('Tutorial: W=Jump, A=Left, D=Right, S=Down', 10, 50);
-    }
-    // Tambahkan render skillSprites di room skills
-    if (room.name === 'skills' && room.skillSprites) {
-      room.skillSprites.forEach(skill => {
-        const img = new Image();
-        img.src = skill.src;
-        ctx.drawImage(img, skill.x, 120, 64, 64);
-        ctx.fillStyle = 'black';
-        ctx.font = '14px Arial';
-        ctx.fillText(skill.label, skill.x, 200);
+        npc.drawWithCamera(ctx, cameraX);
       });
+      // Draw player
+      player.drawWithCamera(ctx, cameraX);
+
+      // Door interaction
+      room.doors.forEach(door => {
+        if (door.isPlayerNear(player)) {
+          ctx.fillStyle = 'black';
+          ctx.font = '16px Arial';
+          ctx.fillText('Press [F] to enter', door.x - cameraX + 5, door.y - 25);
+          if (keys.f && canUseDoor) {
+            canUseDoor = false;
+            if (door.targetRoom === 'soon') {
+              // Tampilkan pesan soon
+              ctx.fillStyle = 'red';
+              ctx.font = '32px Arial';
+              ctx.fillText('SOON', canvas.width / 2 - 50, canvas.height / 2);
+            } else {
+              loadRoom(door.targetRoom, { originRoomIdx: currentRoom });
+            }
+          }
+        }
+      });
+      // NPC interaction (only if ada NPC di room)
+      npcs.forEach(npc => {
+        if (npc.isPlayerClose(player) && !keys.e) {
+          // Animasi E-Interact
+          ctx.save();
+          ctx.imageSmoothingEnabled = false;
+          if (eInteractImg.complete && eInteractImg.naturalWidth > 0) {
+            ctx.drawImage(
+              eInteractImg,
+              eInteractFrame * E_INTERACT_FRAME_WIDTH, 0, E_INTERACT_FRAME_WIDTH, E_INTERACT_FRAME_HEIGHT,
+              player.x - cameraX + player.width / 2 - 16, player.y - 40, 32, 32
+            );
+          }
+          ctx.restore();
+        }
+        if (npc.isPlayerClose(player) && keys.e) {
+          ctx.fillStyle = 'black';
+          ctx.font = '20px Arial';
+          ctx.fillText('Hello World!', npc.x - cameraX, npc.y - 10);
+        }
+      });
+      // Update animasi E-Interact
+      eInteractAnimCounter++;
+      if (eInteractAnimCounter >= E_INTERACT_ANIM_SPEED) {
+        eInteractFrame = (eInteractFrame + 1) % E_INTERACT_TOTAL_FRAMES;
+        eInteractAnimCounter = 0;
+      }
+      if (showTutorial && currentRoom === 0) {
+        ctx.fillStyle = 'black';
+        ctx.font = '18px Arial';
+        ctx.fillText('Tutorial: W=Jump, A=Left, D=Right, S=Down', 10, 50);
+      }
+      // Tambahkan render skillSprites di room skills (pakai cameraX)
+      if (room.name === 'skills' && room.skillSprites) {
+        room.skillSprites.forEach(skill => {
+          const img = skillSpriteImages[skill.src];
+          if (img) {
+            ctx.drawImage(img, skill.x - cameraX, 160, 80, 80);
+          }
+          ctx.fillStyle = 'black';
+          ctx.font = '16px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText(skill.label, skill.x - cameraX + 40, 260);
+        });
+      }
+      ctx.textAlign = 'left';
+      requestAnimationFrame(gameLoop);
+    } catch (err) {
+      console.error('Game loop error:', err);
     }
-    requestAnimationFrame(gameLoop);
   }
 
   // Tambahkan drawWithCamera untuk Door, NPC, dan Player
@@ -360,19 +451,50 @@ window.addEventListener('DOMContentLoaded', () => {
   // === Play Button Event ===
   if (playButton) {
     playButton.addEventListener('click', () => {
+      console.log('Play button clicked');
       if (gameStarted) return;
       startPage.style.display = 'none';
       canvas.style.display = 'block';
+      if (musicToggleButton) musicToggleButton.style.display = 'block';
       gameStarted = true;
       gameLoop();
       setupMusicToggle();
-      startMenuMusic.pause();
-      startMenuMusic.currentTime = 0;
-      levelMusic.play();
+      // Stop START music, play EXPLORE or Dungeon depending on room
+      if (typeof startMenuMusic !== 'undefined') {
+        startMenuMusic.pause();
+        startMenuMusic.currentTime = 0;
+      }
+      // Play correct music for the room (EXPLORE or Dungeon)
+      playRoomMusic(currentRoom);
     });
+  } else {
+    // Fallback: auto-start game if Play button not found (debug only)
+    console.warn('Play button not found, auto-starting game for debug');
+    startPage.style.display = 'none';
+    canvas.style.display = 'block';
+    if (musicToggleButton) musicToggleButton.style.display = 'block';
+    gameStarted = true;
+    gameLoop();
+    setupMusicToggle();
+    startMenuMusic.pause();
+    startMenuMusic.currentTime = 0;
+    levelMusic.play();
   }
 
   // Ganti logic level di tombol F dan resetPositions dengan loadRoom(idx)
-  // Panggil loadRoom(0) di awal game
-  loadRoom(0);
+  // Panggil loadRoom(0) di awal game, SKIP music
+  loadRoom(0, null, true);
+
+  // === Skill Sprites Image Cache ===
+  const skillSpriteImages = {};
+  if (rooms) {
+    const skillsRoom = rooms.find(r => r.name === 'skills');
+    if (skillsRoom && skillsRoom.skillSprites) {
+      skillsRoom.skillSprites.forEach(skill => {
+        const img = new Image();
+        img.src = skill.src;
+        skillSpriteImages[skill.src] = img;
+      });
+    }
+  }
 });

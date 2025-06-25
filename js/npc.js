@@ -2,7 +2,7 @@
 // Contains the NPC class
 
 export class NPC {
-  constructor(x, y, width, height, spriteSrc, maxFrames = 21, frameRate = 10, scale = 2) {
+  constructor(x, y, width, height, spriteSrc, maxFrames = 21, frameRate = 10, scale = 2, id = undefined, defaultDirection = undefined, direction = undefined) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -10,7 +10,9 @@ export class NPC {
     this.scale = scale; // now 2 for smaller canvas
     this.sprite = new Image();
     this.sprite.src = spriteSrc;
-    this.direction = 'right';
+    this.direction = direction || 'right';
+    this.defaultDirection = defaultDirection;
+    this.id = id;
     this.interactionDistance = 40; // smaller for smaller canvas
     this.maxFrames = maxFrames;
     this.frame = 0;
@@ -19,7 +21,7 @@ export class NPC {
     this.groundLevel = 480 - this.height * this.scale; // Default canvas height
   }
   update(player, canvas) {
-    this.direction = player.x < this.x ? 'left' : 'right';
+    // Hapus direction auto-follow, biar diatur dari main.js
     this.frameCounter++;
     if (this.frameCounter >= this.frameRate) { this.frame = (this.frame + 1) % this.maxFrames; this.frameCounter = 0; }
     this.groundLevel = canvas.height - this.height * this.scale;
