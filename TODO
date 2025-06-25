@@ -10,9 +10,8 @@ CHARACTERS:
 -- angel (kalau mati dihidupin lagi sama dia)
 -- fear (boss, nanti ada di pertengahan dan ending)
 TODO:
+-- fix audio di tavern, pas masuk pintu skills, etc playnya EXPLORE harusnya 8bitdungeon
 -- buat agar player harus berbicara ke npc diluar dulu baru bisa masuk tavern. kalo belum berbicara maka akan dipaksa berbicara oleh npcnya dengan muncul pop up dialogue seperti (ekhem)
--- fix setting and credit pop up card (done)
--- buat animasi loncat buat MC (done)
 -- design intro
 -- fix resolusi (done?)
 -- animasi interaktif saat bicara

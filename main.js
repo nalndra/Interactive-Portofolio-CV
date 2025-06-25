@@ -78,27 +78,27 @@ window.addEventListener('DOMContentLoaded', () => {
       width: 640,
       doors: [new Door({ x: 640 - 120, y: 480 - 96, targetRoom: 1, label: 'Tavern', spawnOffset: 10 })],
       // NPC hanya ada jika belum masuk ke tavern
-      npcs: [{ x: (0 + (640 - 120)) / 2 - 16, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png', id: 'mainnpc' }],
+      npcs: [{ x: (0 + (640 - 120)) / 2 - 16, y: 480 - 64, sprite: 'assets/characters/youknowwho-sprite/myself-idle.png', id: 'mainnpc' }],
       playerStart: { x: 0, y: 480 - 64 },
     },
     // Tavern
     {
       name: 'tavern',
-      width: 1280,
+      width: 1800, // tetap besar
       doors: [
-        new Door({ x: 400, y: 480 - 96, targetRoom: 2, label: 'Owner Info', spawnOffset: 10 }),
-        new Door({ x: 525, y: 480 - 96, targetRoom: 3, label: 'Skills', spawnOffset: 10 }),
-        new Door({ x: 650, y: 480 - 96, targetRoom: 4, label: 'Experience', spawnOffset: 10 }),
-        new Door({ x: 775, y: 480 - 96, targetRoom: 5, label: 'Certificate', spawnOffset: 10 }),
-        new Door({ x: 1200, y: 480 - 96, targetRoom: 'soon', label: '???', spawnOffset: 10 }), // mentok kanan
-        new Door({ x: 0, y: 480 - 96, targetRoom: 0, label: 'Exit', spawnOffset: 10 }) // Exit tetap di kiri
+        new Door({ x: 0, y: 480 - 96, targetRoom: 0, label: 'Exit', spawnOffset: 10 }),
+        new Door({ x: 240, y: 480 - 96, targetRoom: 2, label: 'Owner Info', spawnOffset: 10 }),
+        new Door({ x: 440, y: 480 - 96, targetRoom: 3, label: 'Skills', spawnOffset: 10 }),
+        new Door({ x: 640, y: 480 - 96, targetRoom: 4, label: 'Experience', spawnOffset: 10 }),
+        new Door({ x: 840, y: 480 - 96, targetRoom: 5, label: 'Certificate', spawnOffset: 10 }),
+        new Door({ x: 1720, y: 480 - 96, targetRoom: 'soon', label: '???', spawnOffset: 10 }) // pojok kanan
       ],
       npcs: [
-        { x: 320, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png', id: 'mainnpc' },
-        // === NPC SAATCHI ===
-        { x: 1050, y: 480 - 64, sprite: 'assets/characters/Saatchi/Saatchi-idle.png', id: 'saatchi', defaultDirection: 'right', direction: 'right' }
+        { x: 320, y: 480 - 64, sprite: 'assets/characters/youknowwho-sprite/myself-idle.png', id: 'mainnpc' },
+        { x: 950, y: 480 - 64, sprite: 'assets/characters/saatchi-sprite/Saatchi-idle.png', id: 'saatchi', defaultDirection: 'right', direction: 'right' },
+        { x: 1670, y: 480 - 64, sprite: 'assets/characters/angel-sprite/angel-idle.png', id: 'angel', defaultDirection: 'left', direction: 'left' }
       ],
-      playerStart: { x: 0 + 80 + 10, y: 480 - 64 },
+      playerStart: { x: 240 + 80 + 10, y: 480 - 64 },
     },
     // Room Info/Portfolio
     {
@@ -154,8 +154,8 @@ window.addEventListener('DOMContentLoaded', () => {
     rooms[0].playerStart.y,
     32,
     32,
-    'assets/characters/kid-myself/kidmyself-idle.png',
-    'assets/characters/kid-myself/kidmyself-walk.png',
+    'assets/characters/player-sprite/kidmyself-idle.png',
+    'assets/characters/player-sprite/kidmyself-walk.png',
     21,
     10
   );
@@ -185,20 +185,22 @@ window.addEventListener('DOMContentLoaded', () => {
     if (typeof window._npcHasEnteredTavern === 'undefined') window._npcHasEnteredTavern = false;
     if (idx === 0) {
       // NPC di luar hanya jika belum pernah ke tavern
-      rooms[0].npcs = window._npcHasEnteredTavern ? [] : [{ x: (0 + (640 - 120)) / 2 - 16, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png', id: 'mainnpc' }];
+      rooms[0].npcs = window._npcHasEnteredTavern ? [] : [{ x: (0 + (640 - 120)) / 2 - 16, y: 480 - 64, sprite: 'assets/characters/youknowwho-sprite/myself-idle.png', id: 'mainnpc' }];
     }
     if (idx === 1) {
       // Begitu masuk ke tavern, NPC hanya muncul di dalam
       window._npcHasEnteredTavern = true;
       rooms[1].npcs = [
-        { x: 320, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png', id: 'mainnpc' },
-        { x: 1050, y: 480 - 64, sprite: 'assets/characters/Saatchi/Saatchi-idle.png', id: 'saatchi', defaultDirection: 'right', direction: 'right' }
+        { x: 320, y: 480 - 64, sprite: 'assets/characters/youknowwho-sprite/myself-idle.png', id: 'mainnpc' },
+        { x: 950, y: 480 - 64, sprite: 'assets/characters/saatchi-sprite/Saatchi-idle.png', id: 'saatchi', defaultDirection: 'right', direction: 'right' },
+        { x: 1670, y: 480 - 64, sprite: 'assets/characters/angel-sprite/angel-idle.png', id: 'angel', defaultDirection: 'left', direction: 'left' }
       ];
     } else {
       // NPC di dalam hanya jika sudah pernah ke tavern
       rooms[1].npcs = window._npcHasEnteredTavern ? [
-        { x: 320, y: 480 - 64, sprite: 'assets/characters/myselfNPC/myself-idle.png', id: 'mainnpc' },
-        { x: 1050, y: 480 - 64, sprite: 'assets/characters/Saatchi/Saatchi-idle.png', id: 'saatchi', defaultDirection: 'right', direction: 'right' }
+        { x: 320, y: 480 - 64, sprite: 'assets/characters/youknowwho-sprite/myself-idle.png', id: 'mainnpc' },
+        { x: 950, y: 480 - 64, sprite: 'assets/characters/saatchi-sprite/Saatchi-idle.png', id: 'saatchi', defaultDirection: 'right', direction: 'right' },
+        { x: 1670, y: 480 - 64, sprite: 'assets/characters/angel-sprite/angel-idle.png', id: 'angel', defaultDirection: 'left', direction: 'left' }
       ] : [];
     }
     const spawn = room.doors.find(d => fromDoor && d.targetRoom === fromDoor.originRoomIdx);
@@ -287,6 +289,16 @@ window.addEventListener('DOMContentLoaded', () => {
   let eInteractAnimCounter = 0;
   const E_INTERACT_ANIM_SPEED = 6;
 
+  // === F-Interact Sprite Animation Setup ===
+  const fInteractImg = new Image();
+  fInteractImg.src = 'assets/miscellaneous/F-Interact.png';
+  const F_INTERACT_FRAME_WIDTH = 32;
+  const F_INTERACT_FRAME_HEIGHT = 32;
+  const F_INTERACT_TOTAL_FRAMES = 20;
+  let fInteractFrame = 0;
+  let fInteractAnimCounter = 0;
+  const F_INTERACT_ANIM_SPEED = 6;
+
   // === Music Toggle ===
   function setupMusicToggle() {
     if (!musicToggleButton || !musicLogo) return;
@@ -320,11 +332,11 @@ window.addEventListener('DOMContentLoaded', () => {
       room.doors.forEach(door => door.drawWithCamera(ctx, cameraX));
       // Draw NPCs
       npcs.forEach(npc => {
-        // HANYA myselfNPC (mainnpc) yang selalu lihat ke arah player
-        if (npc.id === 'mainnpc') {
+        // HANYA myselfNPC (mainnpc) dan angel yang selalu lihat ke arah player
+        if (npc.id === 'mainnpc' || npc.id === 'angel') {
           npc.direction = player.x < npc.x ? 'left' : 'right';
-        } else if (npc.id === 'saatchi' || npc.id === 'angel') {
-          // saatchi & angel hanya lihat ke arah player saat interaksi
+        } else if (npc.id === 'saatchi') {
+          // saatchi hanya lihat ke arah player saat interaksi
           if (npc.isPlayerClose(player) && keys.e) {
             npc.direction = player.x < npc.x ? 'left' : 'right';
           } else {
@@ -345,14 +357,31 @@ window.addEventListener('DOMContentLoaded', () => {
 
       // Door interaction
       room.doors.forEach(door => {
-        if (door.isPlayerNear(player)) {
-          ctx.fillStyle = 'black';
-          ctx.font = '16px Arial';
-          ctx.fillText('Press [F] to enter', door.x - cameraX + 5, door.y - 25);
+        // --- Syarat: player harus benar-benar di depan pintu (centered & feet sejajar) ---
+        // Hitung posisi kaki player dan tengah player
+        const playerFeetY = player.y + player.height * player.scale;
+        const doorFeetY = door.y + door.height;
+        const feetMargin = 8; // toleransi pixel vertikal
+        const playerCenterX = player.x + (player.width * player.scale) / 2;
+        const doorCenterX = door.x + door.width / 2;
+        const centerMargin = 16; // toleransi pixel horizontal
+        const isCentered = Math.abs(playerCenterX - doorCenterX) < centerMargin;
+        const isFeetAligned = Math.abs(playerFeetY - doorFeetY) < feetMargin;
+        if (door.isPlayerNear(player) && isCentered && isFeetAligned) {
+          // Draw F-Interact animation above the door
+          ctx.save();
+          ctx.imageSmoothingEnabled = false;
+          if (fInteractImg.complete && fInteractImg.naturalWidth > 0) {
+            ctx.drawImage(
+              fInteractImg,
+              fInteractFrame * F_INTERACT_FRAME_WIDTH, 0, F_INTERACT_FRAME_WIDTH, F_INTERACT_FRAME_HEIGHT,
+              door.x - cameraX + door.width / 2 - 16, door.y - 40, 32, 32
+            );
+          }
+          ctx.restore();
           if (keys.f && canUseDoor) {
             canUseDoor = false;
             if (door.targetRoom === 'soon') {
-              // Tampilkan pesan soon
               ctx.fillStyle = 'red';
               ctx.font = '32px Arial';
               ctx.fillText('SOON', canvas.width / 2 - 50, canvas.height / 2);
@@ -388,6 +417,12 @@ window.addEventListener('DOMContentLoaded', () => {
       if (eInteractAnimCounter >= E_INTERACT_ANIM_SPEED) {
         eInteractFrame = (eInteractFrame + 1) % E_INTERACT_TOTAL_FRAMES;
         eInteractAnimCounter = 0;
+      }
+      // Update animasi F-Interact
+      fInteractAnimCounter++;
+      if (fInteractAnimCounter >= F_INTERACT_ANIM_SPEED) {
+        fInteractFrame = (fInteractFrame + 1) % F_INTERACT_TOTAL_FRAMES;
+        fInteractAnimCounter = 0;
       }
       if (showTutorial && currentRoom === 0) {
         ctx.fillStyle = 'black';

@@ -13,7 +13,7 @@ export class Character {
     this.walkSprite = new Image();
     this.walkSprite.src = walkSrc;
     this.jumpSprite = new Image();
-    this.jumpSprite.src = 'assets/characters/kid-myself/kidmyself-jump.png';
+    this.jumpSprite.src = 'assets/characters/player-sprite/kidmyself-jump.png';
     this.currentSprite = this.idleSprite;
     this.speed = 2.2; // slightly slower for smaller area
     this.velocityX = 0;
